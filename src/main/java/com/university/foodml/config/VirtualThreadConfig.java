@@ -30,8 +30,9 @@ public class VirtualThreadConfig {
         return new TaskExecutorAdapter(Executors.newVirtualThreadPerTaskExecutor());
     }
 
-    @Bean("mlExecutor")
-    public AsyncTaskExecutor mlTaskExecutor() {
+    @Bean("virtualMlExecutor")
+    @ConditionalOnProperty(value = "spring.threads.virtual.enabled", havingValue = "true")
+    public AsyncTaskExecutor virtualMlTaskExecutor() {
         System.out.println("🤖 Creating ML Virtual Thread Executor");
         return new TaskExecutorAdapter(Executors.newVirtualThreadPerTaskExecutor());
     }

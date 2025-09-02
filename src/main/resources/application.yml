@@ -8,7 +8,7 @@ spring:
   application:
     name: food-score-mlops
 
-  # Enable Virtual Threads (JDK 24)
+  # Enable Virtual Threads (JDK 21)
   threads:
     virtual:
       enabled: true
@@ -19,11 +19,26 @@ spring:
     driver-class-name: org.h2.Driver
     username: sa
     password: 
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 20000
+      max-lifetime: 1800000
+      leak-detection-threshold: 60000
+      validation-timeout: 5000
 
   jpa:
     hibernate:
       ddl-auto: create-drop
     show-sql: false
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 50
+        order_inserts: true
+        order_updates: true
+        batch_versioned_data: true
 
   h2:
     console:
@@ -37,6 +52,26 @@ spring:
       - product-search
       - product-barcode
       - food-predictions
+      - model-versions
+      - feature-store
+      - training-pipelines
+      - ml-predictions
+      - feature-cache
+      - model-cache
+      - product-details
+      - nutrition-data
+      - ingredient-analysis
+
+# Security Configuration
+security:
+  basic:
+    enabled: true
+  cors:
+    allowed-origins: http://localhost:3000,http://localhost:8080
+    allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+    allowed-headers: "*"
+    allow-credentials: true
+    max-age: 3600
 
 # Ollama Configuration
 ollama:
@@ -53,6 +88,10 @@ management:
   endpoint:
     health:
       show-details: always
+  simple:
+    metrics:
+      export:
+        enabled: true
 
 # Logging Configuration
 logging:
@@ -62,6 +101,7 @@ logging:
     org.springframework.data.jpa: INFO
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.security: DEBUG
   pattern:
     console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
@@ -76,3 +116,19 @@ logging:
       max-file-size: 100MB
       max-history: 30
       total-size-cap: 1GB
+
+# Performance Configuration
+performance:
+  thread-pools:
+    ml:
+      core-size: 5
+      max-size: 20
+      queue-capacity: 100
+    prediction:
+      core-size: 10
+      max-size: 50
+      queue-capacity: 200
+    data-processing:
+      core-size: 3
+      max-size: 15
+      queue-capacity: 50

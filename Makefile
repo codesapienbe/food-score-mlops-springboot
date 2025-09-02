@@ -94,3 +94,14 @@ deploy:
 	@echo "$(CYAN) $(ARROW) Docker Deployment Finished $(NC)"
 	@echo "$(CYAN)$(shell printf '=%.0s' {1..$(CONSOLE_WIDTH)})$(NC)"
 	@echo ""
+
+clean: ## Clean the project
+	@echo "$(GREEN)$(SEED) Cleaning project...$(NC)"
+	mvn clean -q
+	@echo "$(GREEN)$(SEED) Project cleaned successfully$(NC)"
+
+
+
+
+
+

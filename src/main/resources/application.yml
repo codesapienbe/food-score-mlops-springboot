@@ -7,6 +7,10 @@ server:
 spring:
   application:
     name: food-score-mlops
+  
+  # Prevent external Logback configurations from interfering
+  main:
+    banner-mode: off
 
   # Enable Virtual Threads (JDK 21)
   threads:
@@ -44,6 +48,15 @@ spring:
     console:
       enabled: true
       path: /h2-console
+  
+  # Web Resources Configuration for PWA
+  web:
+    resources:
+      static-locations: classpath:/META-INF/resources/
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 
   # Cache Configuration
   cache:
@@ -96,12 +109,12 @@ management:
 # Logging Configuration
 logging:
   level:
+    root: INFO
     com.university.foodml: INFO
-    dev.langchain4j: WARN
-    org.springframework.data.jpa: INFO
+    org.springframework: WARN
     org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-    org.springframework.security: DEBUG
+    ch.qos.logback: WARN
+    pl.coderion: WARN
   pattern:
     console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
@@ -116,8 +129,13 @@ logging:
       max-file-size: 100MB
       max-history: 30
       total-size-cap: 1GB
+  config: classpath:logback-spring.xml
 
-# Performance Configuration
+
+
+
+
+  # Performance Configuration
 performance:
   thread-pools:
     ml:
@@ -132,3 +150,13 @@ performance:
       core-size: 3
       max-size: 15
       queue-capacity: 50
+
+# Vaadin Configuration
+vaadin:
+  productionMode: false
+  frontend:
+    theme: food-score-mlops
+  pwa:
+    enabled: true
+    manifest-path: /manifest.json
+    service-worker-path: /sw.js

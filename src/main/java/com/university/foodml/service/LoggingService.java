@@ -17,6 +17,37 @@ public class LoggingService {
     private static final Logger logger = LoggerFactory.getLogger(LoggingService.class);
     
     /**
+     * Log application startup information with structured format.
+     * This method is safe to call during application initialization.
+     * 
+     * @param component Component name for monitoring
+     * @param message Startup message
+     * @param metadata Additional startup metadata
+     */
+    public void logStartupEvent(String component, String message, String metadata) {
+        try {
+            // Only set MDC if the logging system is fully initialized
+            if (MDC.getMDCAdapter() != null) {
+                MDC.put("component", component);
+                MDC.put("startup_phase", "initialization");
+                logger.info("[{}] {} - {}", component, message, metadata);
+            } else {
+                // Fallback to basic logging if MDC is not available
+                logger.info("[{}] {} - {}", component, message, metadata);
+            }
+        } catch (Exception e) {
+            // Fallback to basic logging if there are any MDC issues
+            logger.info("[{}] {} - {}", component, message, metadata);
+        } finally {
+            try {
+                MDC.clear();
+            } catch (Exception e) {
+                // Ignore MDC clear errors
+            }
+        }
+    }
+    
+    /**
      * Log business event with structured format and monitoring fields.
      * 
      * @param level Log level (INFO, WARN, ERROR, DEBUG)
@@ -29,12 +60,12 @@ public class LoggingService {
     public void logBusinessEvent(String level, String component, String message, 
                                 String correlationId, String userId, String requestId) {
         
-        // Set MDC context for structured logging
-        if (correlationId != null) MDC.put("correlation_id", correlationId);
-        if (userId != null) MDC.put("user_id", userId);
-        if (requestId != null) MDC.put("request_id", requestId);
-        
         try {
+            // Set MDC context for structured logging
+            if (correlationId != null) MDC.put("correlation_id", correlationId);
+            if (userId != null) MDC.put("user_id", userId);
+            if (requestId != null) MDC.put("request_id", requestId);
+            
             switch (level.toUpperCase()) {
                 case "ERROR":
                     logger.error("[{}] {}", component, message);
@@ -51,7 +82,11 @@ public class LoggingService {
             }
         } finally {
             // Clean up MDC context
-            MDC.clear();
+            try {
+                MDC.clear();
+            } catch (Exception e) {
+                // Ignore MDC clear errors
+            }
         }
     }
     
@@ -68,16 +103,20 @@ public class LoggingService {
     public void logError(String component, String message, Throwable throwable,
                         String correlationId, String userId, String requestId) {
         
-        // Set MDC context for structured logging
-        if (correlationId != null) MDC.put("correlation_id", correlationId);
-        if (userId != null) MDC.put("user_id", userId);
-        if (requestId != null) MDC.put("request_id", requestId);
-        
         try {
+            // Set MDC context for structured logging
+            if (correlationId != null) MDC.put("correlation_id", correlationId);
+            if (userId != null) MDC.put("user_id", userId);
+            if (requestId != null) MDC.put("request_id", requestId);
+            
             logger.error("[{}] {}: {}", component, message, throwable.getMessage(), throwable);
         } finally {
             // Clean up MDC context
-            MDC.clear();
+            try {
+                MDC.clear();
+            } catch (Exception e) {
+                // Ignore MDC clear errors
+            }
         }
     }
     
@@ -100,12 +139,16 @@ public class LoggingService {
      */
     public void logPerformanceMetric(String component, String operation, long durationMs, String correlationId) {
         
-        if (correlationId != null) MDC.put("correlation_id", correlationId);
-        
         try {
+            if (correlationId != null) MDC.put("correlation_id", correlationId);
+            
             logger.info("[{}] Performance: {} completed in {}ms", component, operation, durationMs);
         } finally {
-            MDC.clear();
+            try {
+                MDC.clear();
+            } catch (Exception e) {
+                // Ignore MDC clear errors
+            }
         }
     }
 } 

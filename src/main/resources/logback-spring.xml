@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration>
+<configuration scan="true" scanPeriod="30 seconds">
+    
+    <!-- Prevent external dependencies from overriding our configuration -->
+    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+        <resetJUL>true</resetJUL>
+    </contextListener>
     
     <!-- File appender with JSON format -->
     <appender name="JSON_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -24,17 +29,32 @@
         </rollingPolicy>
     </appender>
     
-    <!-- Console appender for development -->
+    <!-- Console appender for development with robust error handling -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
+        <!-- Add error handling to prevent appender failures -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
     </appender>
     
-    <!-- Root logger configuration -->
+    <!-- Fallback console appender for critical errors -->
+    <appender name="FALLBACK_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+    </appender>
+    
+    <!-- Root logger configuration with fallback -->
     <root level="INFO">
         <appender-ref ref="JSON_FILE"/>
         <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FALLBACK_CONSOLE"/>
     </root>
     
     <!-- Application-specific logging -->
@@ -59,10 +79,26 @@
         <appender-ref ref="CONSOLE"/>
     </logger>
     
-    <!-- External library logging -->
+    <!-- External library logging - override their configurations -->
     <logger name="dev.langchain4j" level="WARN" additivity="false">
         <appender-ref ref="JSON_FILE"/>
         <appender-ref ref="CONSOLE"/>
+    </logger>
+    
+    <!-- Override openfoodfacts-java-wrapper logging configuration -->
+    <logger name="pl.coderion" level="WARN" additivity="false">
+        <appender-ref ref="JSON_FILE"/>
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    
+    <!-- Logback internal logging to prevent silent failures -->
+    <logger name="ch.qos.logback" level="WARN" additivity="false">
+        <appender-ref ref="FALLBACK_CONSOLE"/>
+    </logger>
+    
+    <!-- Prevent external Logback configurations from interfering -->
+    <logger name="ch.qos.logback.classic.joran.JoranConfigurator" level="ERROR" additivity="false">
+        <appender-ref ref="FALLBACK_CONSOLE"/>
     </logger>
     
 </configuration> 

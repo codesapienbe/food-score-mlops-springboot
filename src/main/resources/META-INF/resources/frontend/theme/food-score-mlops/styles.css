@@ -1,0 +1,369 @@
+/* Custom Food Score MLOps Theme Styles */
+
+:root {
+  /* Food-themed color palette */
+  --food-primary: #4caf50;
+  --food-primary-dark: #388e3c;
+  --food-primary-light: #81c784;
+  --food-secondary: #ff9800;
+  --food-secondary-dark: #f57c00;
+  --food-secondary-light: #ffb74d;
+  --food-success: #4caf50;
+  --food-warning: #ff9800;
+  --food-error: #f44336;
+  --food-info: #2196f3;
+  
+  /* Custom spacing */
+  --food-spacing-xs: 4px;
+  --food-spacing-sm: 8px;
+  --food-spacing-md: 16px;
+  --food-spacing-lg: 24px;
+  --food-spacing-xl: 32px;
+  
+  /* Custom shadows */
+  --food-shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+  --food-shadow-md: 0 4px 8px rgba(0,0,0,0.12);
+  --food-shadow-lg: 0 8px 16px rgba(0,0,0,0.15);
+  --food-shadow-xl: 0 16px 32px rgba(0,0,0,0.2);
+}
+
+/* Header styling */
+.main-header {
+  background: linear-gradient(135deg, var(--food-primary) 0%, var(--food-primary-dark) 100%);
+  color: white;
+  box-shadow: var(--food-shadow-md);
+}
+
+.main-header h1 {
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Navigation drawer styling */
+.main-drawer {
+  background: #fafafa;
+  border-right: 1px solid #e0e0e0;
+}
+
+.main-drawer vaadin-router-link {
+  border-radius: 8px;
+  margin: 4px 8px;
+  transition: all 0.3s ease;
+}
+
+.main-drawer vaadin-router-link:hover {
+  background: var(--food-primary-light);
+  color: white;
+  transform: translateX(4px);
+}
+
+.main-drawer vaadin-router-link[active] {
+  background: var(--food-primary);
+  color: white;
+  box-shadow: var(--food-shadow-sm);
+}
+
+/* Card styling */
+.food-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: var(--food-shadow-sm);
+  transition: all 0.3s ease;
+  border: 1px solid #e0e0e0;
+}
+
+.food-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--food-shadow-lg);
+}
+
+.food-card-header {
+  background: linear-gradient(135deg, var(--food-primary-light) 0%, var(--food-primary) 100%);
+  color: white;
+  padding: var(--food-spacing-md);
+  border-radius: 12px 12px 0 0;
+  font-weight: 600;
+}
+
+/* Metric cards */
+.metric-card {
+  background: white;
+  border-radius: 16px;
+  padding: var(--food-spacing-lg);
+  box-shadow: var(--food-shadow-md);
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.metric-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--food-shadow-xl);
+  border-color: var(--food-primary);
+}
+
+.metric-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--food-primary);
+  margin: var(--food-spacing-md) 0;
+}
+
+.metric-label {
+  color: #666;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Status indicators */
+.status-healthy {
+  color: var(--food-success);
+  background: rgba(76, 175, 80, 0.1);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.status-warning {
+  color: var(--food-warning);
+  background: rgba(255, 152, 0, 0.1);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.status-error {
+  color: var(--food-error);
+  background: rgba(244, 67, 54, 0.1);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* Button styling */
+.food-button-primary {
+  background: var(--food-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: var(--food-shadow-sm);
+}
+
+.food-button-primary:hover {
+  background: var(--food-primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--food-shadow-md);
+}
+
+.food-button-secondary {
+  background: var(--food-secondary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: var(--food-shadow-sm);
+}
+
+.food-button-secondary:hover {
+  background: var(--food-secondary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--food-shadow-md);
+}
+
+/* Form styling */
+.food-form {
+  background: white;
+  border-radius: 16px;
+  padding: var(--food-spacing-xl);
+  box-shadow: var(--food-shadow-md);
+  border: 1px solid #e0e0e0;
+}
+
+.food-form vaadin-text-field,
+.food-form vaadin-text-area,
+.food-form vaadin-select {
+  border-radius: 8px;
+  border: 2px solid #e0e0e0;
+  transition: all 0.3s ease;
+}
+
+.food-form vaadin-text-field:focus,
+.food-form vaadin-text-area:focus,
+.food-form vaadin-select:focus {
+  border-color: var(--food-primary);
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+}
+
+/* Table styling */
+.food-table {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--food-shadow-md);
+}
+
+.food-table-header {
+  background: var(--food-primary);
+  color: white;
+  font-weight: 600;
+  padding: var(--food-spacing-md);
+}
+
+.food-table-row {
+  border-bottom: 1px solid #e0e0e0;
+  transition: background 0.3s ease;
+}
+
+.food-table-row:hover {
+  background: rgba(76, 175, 80, 0.05);
+}
+
+/* Chat interface styling */
+.chat-container {
+  background: #f8f9fa;
+  border-radius: 16px;
+  border: 1px solid #e0e0e0;
+}
+
+.chat-message {
+  background: white;
+  border-radius: 12px;
+  padding: var(--food-spacing-md);
+  margin: var(--food-spacing-sm) 0;
+  box-shadow: var(--food-shadow-sm);
+  max-width: 80%;
+}
+
+.chat-message.ai {
+  background: var(--food-primary-light);
+  color: white;
+  margin-left: auto;
+}
+
+.chat-message.user {
+  background: var(--food-secondary-light);
+  color: white;
+  margin-right: auto;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .metric-card {
+    margin: var(--food-spacing-sm) 0;
+  }
+  
+  .food-form {
+    padding: var(--food-spacing-lg);
+  }
+  
+  .main-drawer {
+    width: 280px;
+  }
+}
+
+/* Loading animations */
+.loading-spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid var(--food-primary);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Food score indicators */
+.score-low {
+  color: var(--food-success);
+  font-weight: 700;
+}
+
+.score-medium {
+  color: var(--food-warning);
+  font-weight: 700;
+}
+
+.score-high {
+  color: var(--food-error);
+  font-weight: 700;
+}
+
+/* Progress bars */
+.food-progress {
+  background: #e0e0e0;
+  border-radius: 10px;
+  height: 20px;
+  overflow: hidden;
+}
+
+.food-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--food-primary) 0%, var(--food-primary-light) 100%);
+  border-radius: 10px;
+  transition: width 0.5s ease;
+}
+
+/* Tooltips */
+.food-tooltip {
+  position: relative;
+  cursor: help;
+}
+
+.food-tooltip:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  z-index: 1000;
+  box-shadow: var(--food-shadow-md);
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --food-primary: #000000;
+    --food-primary-dark: #000000;
+    --food-primary-light: #333333;
+    --food-secondary: #000000;
+    --food-secondary-dark: #000000;
+    --food-secondary-light: #333333;
+  }
+  
+  .food-card {
+    border: 2px solid #000000;
+  }
+  
+  .metric-card {
+    border: 2px solid #000000;
+  }
+} 

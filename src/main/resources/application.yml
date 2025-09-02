@@ -1,0 +1,78 @@
+# Food Score MLOps Pipeline Configuration
+server:
+  port: 8080
+  servlet:
+    context-path: /food-ml
+
+spring:
+  application:
+    name: food-score-mlops
+
+  # Enable Virtual Threads (JDK 24)
+  threads:
+    virtual:
+      enabled: true
+
+  # Database Configuration
+  datasource:
+    url: jdbc:h2:mem:fooddb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  # Cache Configuration
+  cache:
+    type: simple
+    cache-names:
+      - product-search
+      - product-barcode
+      - food-predictions
+
+# Ollama Configuration
+ollama:
+  base-url: http://localhost:11434
+  model-name: qwen3:1.7b
+  timeout: 60s
+
+# Management and Monitoring
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+# Logging Configuration
+logging:
+  level:
+    com.university.foodml: INFO
+    dev.langchain4j: WARN
+    org.springframework.data.jpa: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/application.log
+    max-size: 100MB
+    max-history: 30
+    total-size-cap: 1GB
+  logback:
+    rollingpolicy:
+      file-name-pattern: logs/application-%d{yyyy-MM-dd}.%i.log
+      max-file-size: 100MB
+      max-history: 30
+      total-size-cap: 1GB

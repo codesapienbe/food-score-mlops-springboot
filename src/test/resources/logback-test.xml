@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- Simple console appender for tests -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
+    </appender>
+    
+    <!-- Root logger for tests -->
+    <root level="WARN">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+    
+    <!-- Application-specific logging for tests -->
+    <logger name="com.university.foodml" level="INFO" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    
+    <!-- Framework logging for tests -->
+    <logger name="org.springframework" level="WARN" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    
+    <!-- Hibernate SQL logging for tests -->
+    <logger name="org.hibernate.SQL" level="DEBUG" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    
+    <!-- External library logging for tests -->
+    <logger name="dev.langchain4j" level="WARN" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+    
+    <!-- Prevent external Logback configurations from interfering -->
+    <logger name="ch.qos.logback" level="ERROR" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+</configuration> 

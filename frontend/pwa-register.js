@@ -103,30 +103,27 @@ class PWARegistration {
       
       document.body.appendChild(this.installButton);
     }
-    
-    this.installButton.style.display = 'block';
   }
 
   hideInstallButton() {
     if (this.installButton) {
-      this.installButton.style.display = 'none';
+      this.installButton.remove();
+      this.installButton = null;
     }
   }
 
   async installPWA() {
     if (this.deferredPrompt) {
       this.deferredPrompt.prompt();
-      
       const { outcome } = await this.deferredPrompt.userChoice;
       
       if (outcome === 'accepted') {
-        console.log('User accepted PWA installation');
+        console.log('User accepted the install prompt');
       } else {
-        console.log('User declined PWA installation');
+        console.log('User dismissed the install prompt');
       }
       
       this.deferredPrompt = null;
-      this.hideInstallButton();
     }
   }
 
@@ -140,148 +137,90 @@ class PWARegistration {
   }
 
   setupUpdateNotification() {
-    // Check for app updates
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.ready.then((registration) => {
-        registration.update();
-      });
-    }
-  }
-
-  showUpdateNotification() {
-    const notification = document.createElement('div');
-    notification.className = 'pwa-update-notification';
-    notification.style.cssText = `
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 1000;
-      padding: 16px 24px;
-      background: #4caf50;
-      color: white;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 500;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    `;
-    
-    notification.innerHTML = `
-      <span>🔄 New version available</span>
-      <button onclick="this.parentElement.remove()" style="
-        background: rgba(255,255,255,0.2);
-        border: none;
+    // Show update notification when new version is available
+    const updateNotification = document.createElement('div');
+    updateNotification.className = 'update-notification';
+    updateNotification.innerHTML = `
+      <div style="
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background: #4caf50;
         color: white;
-        padding: 4px 8px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 12px;
-      ">Reload</button>
+        padding: 16px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 1001;
+        max-width: 300px;
+      ">
+        <div style="font-weight: 500; margin-bottom: 8px;">🔄 Update Available</div>
+        <div style="font-size: 14px; margin-bottom: 12px;">A new version is available. Refresh to update.</div>
+        <button onclick="location.reload()" style="
+          background: white;
+          color: #4caf50;
+          border: none;
+          padding: 8px 16px;
+          border-radius: 4px;
+          cursor: pointer;
+          font-weight: 500;
+        ">Refresh Now</button>
+        <button onclick="this.parentElement.remove()" style="
+          background: transparent;
+          color: white;
+          border: 1px solid white;
+          padding: 8px 16px;
+          border-radius: 4px;
+          cursor: pointer;
+          margin-left: 8px;
+        ">Dismiss</button>
+      </div>
     `;
     
-    document.body.appendChild(notification);
+    document.body.appendChild(updateNotification);
     
     // Auto-remove after 10 seconds
     setTimeout(() => {
-      if (notification.parentElement) {
-        notification.remove();
+      if (updateNotification.parentElement) {
+        updateNotification.remove();
       }
     }, 10000);
   }
 
   showNotification(message, type = 'info') {
     const notification = document.createElement('div');
-    notification.className = `pwa-notification pwa-notification-${type}`;
+    notification.className = `notification notification-${type}`;
     notification.style.cssText = `
       position: fixed;
       top: 20px;
-      right: 20px;
-      z-index: 1000;
-      padding: 12px 20px;
-      background: ${type === 'success' ? '#4caf50' : '#2196f3'};
+      left: 50%;
+      transform: translateX(-50%);
+      background: ${type === 'success' ? '#4caf50' : type === 'error' ? '#f44336' : '#2196f3'};
       color: white;
+      padding: 12px 20px;
       border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 1002;
       font-size: 14px;
       font-weight: 500;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      animation: slideIn 0.3s ease;
     `;
-    
     notification.textContent = message;
+    
     document.body.appendChild(notification);
     
-    // Auto-remove after 5 seconds
+    // Auto-remove after 3 seconds
     setTimeout(() => {
       if (notification.parentElement) {
         notification.remove();
       }
-    }, 5000);
-  }
-
-  // Request notification permission
-  async requestNotificationPermission() {
-    if ('Notification' in window) {
-      const permission = await Notification.requestPermission();
-      if (permission === 'granted') {
-        console.log('Notification permission granted');
-        return true;
-      } else {
-        console.log('Notification permission denied');
-        return false;
-      }
-    }
-    return false;
-  }
-
-  // Send push notification
-  sendNotification(title, options = {}) {
-    if ('Notification' in window && Notification.permission === 'granted') {
-      const notification = new Notification(title, {
-        icon: '/icons/icon-192x192.png',
-        badge: '/icons/icon-72x72.png',
-        ...options
-      });
-      
-      notification.onclick = () => {
-        window.focus();
-        notification.close();
-      };
-      
-      return notification;
-    }
+    }, 3000);
   }
 }
 
-// Initialize PWA when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-  window.pwaRegistration = new PWARegistration();
-});
-
-// Add CSS animations
-const style = document.createElement('style');
-style.textContent = `
-  @keyframes slideIn {
-    from {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
-  }
-  
-  .pwa-install-button:hover {
-    background: #1565c0 !important;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.2) !important;
-  }
-  
-  .pwa-install-button:active {
-    transform: translateY(0);
-  }
-`;
-document.head.appendChild(style); 
+// Initialize PWA registration when DOM is loaded
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    new PWARegistration();
+  });
+} else {
+  new PWARegistration();
+} 

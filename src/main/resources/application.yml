@@ -156,6 +156,8 @@ vaadin:
   productionMode: false
   frontend:
     theme: food-score-mlops
+    # Frontend source directory
+    sourceDirectory: frontend
   pwa:
     enabled: true
     manifest-path: /manifest.json

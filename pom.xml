@@ -46,6 +46,10 @@
         <vaadin.version>23.4.0</vaadin.version>
         <vaadin.productionMode>false</vaadin.productionMode>
         <vaadin.requireHomeNodeExec>false</vaadin.requireHomeNodeExec>
+        
+        <!-- Memory settings for frontend build -->
+        <frontend.build.memory>512m</frontend.build.memory>
+        <frontend.build.maxMemory>1g</frontend.build.maxMemory>
     </properties>
 
     <dependencyManagement>
@@ -188,6 +192,7 @@
                 <configuration>
                     <systemPropertyVariables>
                         <spring.classformat.ignore>true</spring.classformat.ignore>
+                        <logback.configurationFile>classpath:logback-test.xml</logback.configurationFile>
                     </systemPropertyVariables>
                     <failIfNoTests>false</failIfNoTests>
                 </configuration>
@@ -199,15 +204,19 @@
                 <artifactId>vaadin-maven-plugin</artifactId>
                 <version>${vaadin.version}</version>
                 <executions>
-
+                    <!-- Prepare frontend during validate phase -->
                     <execution>
                         <id>prepare-frontend</id>
+                        <phase>validate</phase>
                         <goals>
                             <goal>prepare-frontend</goal>
                         </goals>
                     </execution>
+                    
+                    <!-- Build frontend during compile phase -->
                     <execution>
                         <id>build-frontend</id>
+                        <phase>compile</phase>
                         <goals>
                             <goal>build-frontend</goal>
                         </goals>
@@ -215,12 +224,23 @@
                             <skip>false</skip>
                         </configuration>
                     </execution>
+                    
+                    <!-- Clean frontend during clean phase -->
+                    <execution>
+                        <id>clean-frontend</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean-frontend</goal>
+                        </goals>
+                    </execution>
                 </executions>
                 <configuration>
                     <productionMode>${vaadin.productionMode}</productionMode>
                     <pnpmEnable>false</pnpmEnable>
                     <requireHomeNodeExec>${vaadin.requireHomeNodeExec}</requireHomeNodeExec>
                     <skip>false</skip>
+                    <!-- Ensure frontend is built for production -->
+                    <buildDirectory>${project.build.directory}/frontend</buildDirectory>
                 </configuration>
             </plugin>
             
@@ -245,8 +265,68 @@
                     </execution>
                 </executions>
             </plugin>
+            
+            <!-- Maven Resources Plugin to copy frontend assets -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-frontend-resources</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}/META-INF/resources</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.build.directory}/frontend</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
     
+    <!-- Build Profiles -->
+    <profiles>
+        <!-- Development Profile - Fast builds, no optimization -->
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <vaadin.productionMode>false</vaadin.productionMode>
+                <frontend.build.memory>256m</frontend.build.memory>
+                <frontend.build.maxMemory>512m</frontend.build.maxMemory>
+            </properties>
+        </profile>
+        
+        <!-- Production Profile - Optimized builds -->
+        <profile>
+            <id>prod</id>
+            <properties>
+                <vaadin.productionMode>true</vaadin.productionMode>
+                <frontend.build.memory>1g</frontend.build.memory>
+                <frontend.build.maxMemory>2g</frontend.build.maxMemory>
+            </properties>
+        </profile>
+        
+        <!-- CI/CD Profile - Minimal memory usage -->
+        <profile>
+            <id>ci</id>
+            <properties>
+                <vaadin.productionMode>true</vaadin.productionMode>
+                <frontend.build.memory>128m</frontend.build.memory>
+                <frontend.build.maxMemory>256m</frontend.build.maxMemory>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>

@@ -16,4 +16,5 @@ logging:
   pattern:
     console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
   file:
-    name: logs/test-application.log 
+    name: logs/test-application.log
+  config: classpath:logback-test.xml 
